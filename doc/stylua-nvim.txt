@@ -1,0 +1,61 @@
+*stylua-nvim.txt* stylua-nvim
+
+A minimal wrapper around https://github.com/JohnnyMorganz/StyLua to provide a
+way to format Lua in an opinionated way while in Nvim, because no one wants to
+spend time discussing how you should format.
+
+                            STYLUA-NVIM REFERENCE MANUAL
+
+CONTENTS                                                           *stylua-nvim*
+
+    1. Prerequisites......... |stylua-nvim-prerequisites|
+    2. Getting Started....... |stylua-nvim-getting-started|
+    3. Lua API............... |stylua-nvim-lua-api|
+    4. Example Usage......... |stylua-nvim-example-usage|
+
+================================================================================
+PREREQUISITES                                        *stylua-nvim-prerequisites*
+
+- Nvim v0.5.x
+- Make sure to have StyLua instaled. You can find instructions here:
+  https://github.com/JohnnyMorganz/StyLua
+
+================================================================================
+GETTING STARTED                                    *stylua-nvim-getting-started*
+
+Install via your favorite package manager.
+>
+  use({"ckipp01/stylua-nvim"})
+<
+
+================================================================================
+LUA API                                                    *stylua-nvim-lua-api*
+
+
+                                                                 *format_file()*
+format_file()           Use to format the current buffer. If any issues are
+                        found, they will be opened in your loclist.
+
+================================================================================
+Example Usage                                              *stylua-nvim-lua-api*
+
+
+Via a mapping: >
+  local opts = { noremap=true, silent=true }
+  buf_set_keymap("n", "<leader>f", "<cmd>lua require("stylua-nvim")format_file()<CR>', opts)
+<
+
+Usage via nvim-lspconfig and sumneko_lua to be able to use `:Format`: >
+
+  local lsp_config = require("lspconfig")
+  lsp_config.sumneko_lua.setup({
+    commands = {
+      Format = {
+        function()
+          require("stylua-nvim").format_file()
+        end,
+      },
+    },
+    ...
+  })
+<
