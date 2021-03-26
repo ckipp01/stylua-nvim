@@ -3,6 +3,8 @@ local fn = vim.fn
 
 local M = {}
 
+local state = { had_format_err = false }
+
 local function buf_get_full_text(bufnr)
   local text = table.concat(api.nvim_buf_get_lines(bufnr, 0, -1, true), "\n")
   if api.nvim_buf_get_option(bufnr, "eol") then
@@ -24,17 +26,20 @@ M.format_file = function()
 
   local stylua_command = string.format("stylua %s - 2> %s", flags, error_file)
 
-  local output = fn.system(stylua_command, buf_get_full_text(0))
+  local input = buf_get_full_text(0)
+  local output = fn.system(stylua_command, input)
 
   if fn.empty(output) == 0 then
-    -- Clear llist of old issues from previous format
-    vim.fn.setloclist(0, {})
-    vim.cmd("lclose")
-
-    local new_lines = vim.fn.split(output, "\n")
-    -- TODO we should probably do a compare to what we have to not change the
-    -- buffer if we don't have to
-    api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
+    if output ~= input then
+      local new_lines = vim.fn.split(output, "\n")
+      api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
+    end
+    -- We try a little bit to make sure we aren't closing a loclist that we didn't create.
+    -- This isn't perfect in the case of long sessions, but probably better than nothing.
+    if state.had_format_err then
+      vim.fn.setloclist(0, {})
+      vim.cmd("lclose")
+    end
   else
     local errors = table.concat(vim.fn.readfile(error_file), " ")
 
@@ -55,6 +60,7 @@ M.format_file = function()
     if table.getn(locations) == 4 then
       vim.fn.setloclist(0, { { bufnr = 0, lnum = locations[1], col = locations[2], text = errors } })
       vim.cmd("lopen")
+      state.had_format_err = true
     end
   end
 
