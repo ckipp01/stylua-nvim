@@ -42,7 +42,7 @@ Example Usage                                              *stylua-nvim-lua-api*
 
 Via a mapping: >
   local opts = { noremap=true, silent=true }
-  buf_set_keymap("n", "<leader>f", "<cmd>lua require("stylua-nvim")format_file()<CR>', opts)
+  buf_set_keymap("n", "<leader>f", "<cmd>lua require("stylua-nvim").format_file()<CR>', opts)
 <
 
 Usage via nvim-lspconfig and sumneko_lua to be able to use `:Format`: >
