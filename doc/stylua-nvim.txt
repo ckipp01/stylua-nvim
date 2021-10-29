@@ -32,9 +32,18 @@ Install via your favorite package manager.
 LUA API                                                    *stylua-nvim-lua-api*
 
 
-                                                                 *format_file()*
-format_file()           Use to format the current buffer. If any issues are
+                                                           *format_file(config)*
+format_file(config)     Use to format the current buffer. If any issues are
                         found, they will be opened in your loclist.
+
+                        Takes an optional configuration argument
+                        {
+                          error_display_strategy = <error_display_string>
+                        }
+
+                        <error_display_string> options currently are:
+                        * "loclist": display errors in a location list
+                        * "none": do not display stylua errors
 
 ================================================================================
 Example Usage                                              *stylua-nvim-lua-api*
