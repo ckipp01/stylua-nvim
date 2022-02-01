@@ -11,6 +11,12 @@ Make sure you have StyLua installed and then install this plugin:
 use({"ckipp01/stylua-nvim"})
 ```
 
+If you would like your plugin manager to automatically download Stylua for you, run the Stylua install command using your plugin managers hooks. For example in Packer, you can use the following:
+
+```lua
+use({"ckipp01/stylua-nvim", run = "cargo install stylua"})
+```
+
 ### Docs
 
 Everything you need should be in the [help
