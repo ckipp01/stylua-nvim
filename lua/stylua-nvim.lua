@@ -19,15 +19,6 @@ local function buf_get_full_text(bufnr)
   return text
 end
 
-local function create_flags()
-  local config_file = fn.findfile("stylua.toml", ".;")
-  if fn.empty(config_file) == 0 then
-    return "--config-path " .. config_file
-  else
-    return ""
-  end
-end
-
 local function no_errors(output, input)
   if output ~= input then
     local new_lines = vim.fn.split(output, "\n")
@@ -72,7 +63,7 @@ M.format_file = function(user_config, extra_flags)
     config.error_display_strategy = user_config.error_display_strategy
   end
   local error_file = fn.tempname()
-  local flags = create_flags()
+  local flags = '--search-parent-directories'
 
   local stylua_command = string.format("stylua %s %s - 2> %s", flags, extra_flags or "", error_file)
 
