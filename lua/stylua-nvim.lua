@@ -67,14 +67,14 @@ local function handle_errors(error_file)
   end
 end
 
-M.format_file = function(user_config)
+M.format_file = function(user_config, extra_flags)
   if user_config and user_config.error_display_strategy then
     config.error_display_strategy = user_config.error_display_strategy
   end
   local error_file = fn.tempname()
   local flags = create_flags()
 
-  local stylua_command = string.format("stylua %s - 2> %s", flags, error_file)
+  local stylua_command = string.format("stylua %s %s - 2> %s", flags, extra_flags or "", error_file)
 
   local input = buf_get_full_text(0)
   local output = fn.system(stylua_command, input)
@@ -88,6 +88,13 @@ M.format_file = function(user_config)
   fn.delete(error_file)
 end
 
--- TODO add in a range format option
+M.format_range = function(start, stop, user_config)
+  local extra_flags = ("--range-start %d"):format(fn.line2byte(start) - 1)
+  if stop == api.nvim_buf_line_count(0) then
+    M.format(user_config, extra_flags)
+  else
+    M.format(user_config, extra_flags .. (" --range-end %d"):format(fn.line2byte(stop + 1) - 1))
+  end
+end
 
 return M
