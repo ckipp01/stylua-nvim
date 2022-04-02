@@ -20,4 +20,4 @@ use({"ckipp01/stylua-nvim", run = "cargo install stylua"})
 ### Docs
 
 Everything you need should be in the [help
-docs](https://github.com/ckipp01/stylua-nvim/blob/master/doc/stylua-nvim.txt).
+docs](https://github.com/ckipp01/stylua-nvim/blob/main/doc/stylua-nvim.txt).
