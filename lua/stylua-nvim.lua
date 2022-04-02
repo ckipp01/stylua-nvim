@@ -91,9 +91,9 @@ end
 M.format_range = function(start, stop, user_config)
   local extra_flags = ("--range-start %d"):format(fn.line2byte(start) - 1)
   if stop == api.nvim_buf_line_count(0) then
-    M.format(user_config, extra_flags)
+    M.format_file(user_config, extra_flags)
   else
-    M.format(user_config, extra_flags .. (" --range-end %d"):format(fn.line2byte(stop + 1) - 1))
+    M.format_file(user_config, extra_flags .. (" --range-end %d"):format(fn.line2byte(stop + 1) - 1))
   end
 end
 
