@@ -44,10 +44,20 @@ end
 local function handle_errors(error_file)
   local errors = table.concat(vim.fn.readfile(error_file), " ")
 
-  -- A little hacky, but we know that the error messsages are always shaped
-  -- in a similiar way containing:
-  --(starting from line 32, character 2 and ending on line 32, character 5)
-  -- So we know that:
+  -- Error messages from stylua have been observed in two general formats:
+  --
+  -- Parsing error:
+  --    error: failed to format from stdin: error parsing: unexpected token `{`. (starting from line 4, character 11 and ending on line 4, character 12)
+  --
+  -- Execution error:
+  --    error: Found argument '--config-path/Users/jsimpson/dotfiles/nvim/language/stylua.toml' which wasn't expected, or isn't valid in this context
+
+  -- The following approach is sufficient for the observed error messages, but a little fragile as
+  -- it assumes that the first two numerical values in the error message are the row and column of
+  -- the error. Generally, parsing related errors will contain the following substring in the error
+  -- message:
+  --    (starting from line 32, character 2 and ending on line 32, character 5)
+  -- So we assume that:
   --	- locations[1] = start line
   --	- locations[2] = start col
   --	- locations[3] = end line
@@ -57,14 +67,13 @@ local function handle_errors(error_file)
     table.insert(locations, num)
   end
 
-  -- Ensure that we have the full range
-  if table.getn(locations) == 4 then
-    if config.error_display_strategy == "loclist" then
-      vim.fn.setloclist(0, { { bufnr = 0, lnum = locations[1], col = locations[2], text = errors } })
-      vim.cmd("lopen")
-    end
-    state.had_format_err = true
+  if config.error_display_strategy == "loclist" then
+    -- Error messages where location information could not be parsed will be given (0, 0) as a
+    -- location.
+    vim.fn.setloclist(0, { { bufnr = 0, lnum = locations[1] or 0, col = locations[2] or 0, text = errors } })
+    vim.cmd("lopen")
   end
+  state.had_format_err = true
 end
 
 M.format_file = function(user_config, extra_flags)
