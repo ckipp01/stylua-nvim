@@ -32,7 +32,7 @@ local function no_errors(output, input)
   end
 end
 
-local function handle_errors(error_file)
+local function handle_errors(error_file, bufnr)
   local errors = table.concat(vim.fn.readfile(error_file), " ")
 
   -- Error messages from stylua have been observed in two general formats:
@@ -61,7 +61,7 @@ local function handle_errors(error_file)
   if config.error_display_strategy == "loclist" then
     -- Error messages where location information could not be parsed will be given (0, 0) as a
     -- location.
-    vim.fn.setloclist(0, { { bufnr = 0, lnum = locations[1] or 0, col = locations[2] or 0, text = errors } })
+    vim.fn.setloclist(0, { { bufnr = bufnr, lnum = locations[1] or 0, col = locations[2] or 0, text = errors } })
     vim.cmd("lopen")
   end
   state.had_format_err = true
@@ -72,17 +72,18 @@ M.format_file = function(user_config, extra_flags)
     config.error_display_strategy = user_config.error_display_strategy
   end
   local error_file = fn.tempname()
-  local flags = '--search-parent-directories'
+  local flags = "--search-parent-directories"
 
   local stylua_command = string.format("stylua %s %s - 2> %s", flags, extra_flags or "", error_file)
 
-  local input = buf_get_full_text(0)
+  local bufnr = vim.fn.bufnr("%")
+  local input = buf_get_full_text(bufnr)
   local output = fn.system(stylua_command, input)
 
   if fn.empty(output) == 0 then
     no_errors(output, input)
   else
-    handle_errors(error_file)
+    handle_errors(error_file, bufnr)
   end
 
   fn.delete(error_file)
