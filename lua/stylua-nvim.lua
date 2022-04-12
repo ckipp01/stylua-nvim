@@ -108,6 +108,7 @@ end
 M.setup = function(opt)
   opt = opt or {}
   config.config_file = opt.config_file
+  config.error_display_strategy = opt.error_display_strategy
 end
 
 return M
