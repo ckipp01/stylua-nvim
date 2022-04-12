@@ -17,7 +17,7 @@ CONTENTS                                                           *stylua-nvim*
 PREREQUISITES                                        *stylua-nvim-prerequisites*
 
 - Nvim v0.5.x
-- Make sure to have StyLua instaled. You can find instructions here:
+- Make sure to have StyLua installed. You can find instructions here:
   https://github.com/JohnnyMorganz/StyLua
 
 ================================================================================
@@ -27,6 +27,27 @@ Install via your favorite package manager.
 >
   use({"ckipp01/stylua-nvim"})
 <
+
+This plugin does not require that setup be called, however it is possible to
+provide additional configuration using the setup function.
+>
+  use({"ckipp01/stylua-nvim"},
+      config = function()
+          require("stylua-nvim").setup{config_file = "stylua.toml"}
+      end)
+<
+
+Available setup options:
+
+config_file             Specifies a configuration file to use for the StylLua
+                        linter. This can be an absolute or relative path. The
+                        default value is nothing, which means the linter will
+                        search for a stylua.toml file using the
+                        `--search-parent-directories` option of the linter.
+
+error_display_strategy  The mechanism to display errors encountered during
+                        linting. Allowed values are 'loclist' or 'none'. Default
+                        value is 'loclist'.
 
 ================================================================================
 LUA API                                                    *stylua-nvim-lua-api*

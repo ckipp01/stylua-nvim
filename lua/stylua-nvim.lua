@@ -19,6 +19,13 @@ local function buf_get_full_text(bufnr)
   return text
 end
 
+local function create_flags()
+  if config.config_file then
+    return "--config-path " .. config.config_file
+  end
+  return "--search-parent-directories"
+end
+
 local function no_errors(output, input)
   if output ~= input then
     local new_lines = vim.fn.split(output, "\n")
@@ -72,7 +79,7 @@ M.format_file = function(user_config, extra_flags)
     config.error_display_strategy = user_config.error_display_strategy
   end
   local error_file = fn.tempname()
-  local flags = "--search-parent-directories"
+  local flags = create_flags()
 
   local stylua_command = string.format("stylua %s %s - 2> %s", flags, extra_flags or "", error_file)
 
@@ -96,6 +103,12 @@ M.format_range = function(start, stop, user_config)
   else
     M.format_file(user_config, extra_flags .. (" --range-end %d"):format(fn.line2byte(stop + 1) - 1))
   end
+end
+
+M.setup = function(opt)
+  opt = opt or {}
+  config.config_file = opt.config_file
+  config.error_display_strategy = opt.error_display_strategy
 end
 
 return M
