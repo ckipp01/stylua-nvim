@@ -67,7 +67,7 @@ format_file(config)     Use to format the current buffer. If any issues are
                         * "none": do not display stylua errors
 
 ================================================================================
-Example Usage                                              *stylua-nvim-lua-api*
+Example Usage                                        *stylua-nvim-example-usage*
 
 
 Via a mapping: >
